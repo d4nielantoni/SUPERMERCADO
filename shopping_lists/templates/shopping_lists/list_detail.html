@@ -1,0 +1,101 @@
+{% extends 'shopping_lists/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 mb-4">
+        <div class="d-flex justify-content-between align-items-center flex-wrap">
+            <h1 class="mb-0">{{ shopping_list.title }}</h1>
+            <a href="{% url 'home' %}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Voltar
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8 col-md-7 mb-4">
+        {% if items %}
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Itens da Lista</h5>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Item</th>
+                                    <th>Qtd.</th>
+                                    <th>Preço</th>
+                                    <th class="text-center">Status</th>
+                                    <th class="text-center">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in items %}
+                                    <tr {% if item.purchased %}class="table-success"{% endif %}>
+                                        <td>{{ item.name }}</td>
+                                        <td>
+                                            {% if item.quantity %}
+                                                {% if item.unit %}
+                                                    {{ item.quantity }} {{ item.unit }}
+                                                {% else %}
+                                                    {{ item.quantity }}
+                                                {% endif %}
+                                            {% elif item.unit %}
+                                                {{ item.unit }}
+                                            {% else %}
+                                                -
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if item.price %}
+                                                R$ {{ item.price }}
+                                            {% else %}
+                                                -
+                                            {% endif %}
+                                        </td>
+                                        <td class="text-center">
+                                            <a href="{% url 'toggle_item' item.pk %}" class="btn btn-sm {% if item.purchased %}btn-success{% else %}btn-outline-success{% endif %}">
+                                                {% if item.purchased %}
+                                                    <i class="fas fa-check"></i>
+                                                {% else %}
+                                                    <i class="fas fa-shopping-cart"></i>
+                                                {% endif %}
+                                            </a>
+                                        </td>
+                                        <td class="text-center">
+                                            <a href="{% url 'delete_item' item.pk %}" class="btn btn-sm btn-danger" 
+                                               onclick="return confirm('Tem certeza que deseja deletar este item?')">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="alert alert-info">
+                Nenhum item adicionado ainda.
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="col-lg-4 col-md-5">
+        <div class="card sticky-top" style="top: 80px">
+            <div class="card-body">
+                <h5 class="card-title mb-3">Adicionar Item</h5>
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form|crispy }}
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-plus me-2"></i>Adicionar
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
