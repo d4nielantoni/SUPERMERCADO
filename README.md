@@ -34,6 +34,3 @@ O projeto SUPERMERCADO é uma aplicação web desenvolvida em Django, destinada 
 
 ## Contribuições
 Contribuições são bem-vindas! Sinta-se à vontade para enviar pull requests.
-
-## Licença
-Este projeto está licenciado sob a Licença MIT.
