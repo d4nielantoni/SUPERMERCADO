@@ -11,7 +11,7 @@ O projeto SUPERMERCADO é uma aplicação web desenvolvida em Django, destinada 
 ## Como Usar
 1. Clone o repositório:
    ```bash
-   git clone https://github.com/seu_usuario/SUPERMERCADO.git
+   git clone https://github.com/d4nielantoni/SUPERMERCADO.git
    cd SUPERMERCADO
    ```
 2. Ative o ambiente virtual:
