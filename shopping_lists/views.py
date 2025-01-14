@@ -1,8 +1,35 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django import forms
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
+from django.contrib.auth import login
 from .models import ShoppingList, Item
 from .forms import ShoppingListForm, ItemForm
+
+class SimpleUserCreationForm(UserCreationForm):
+    password1 = forms.CharField(
+        label="Senha",
+        strip=False,
+        widget=forms.PasswordInput(attrs={'class': 'form-control'}),
+    )
+    password2 = forms.CharField(
+        label="Confirme a senha",
+        strip=False,
+        widget=forms.PasswordInput(attrs={'class': 'form-control'}),
+    )
+    
+    class Meta:
+        model = User
+        fields = ("username",)
+        widgets = {
+            'username': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['username'].help_text = 'Escolha um nome de usuário'
 
 @login_required
 def home(request):
@@ -64,3 +91,15 @@ def delete_list(request, pk):
     shopping_list.delete()
     messages.success(request, 'Lista removida com sucesso!')
     return redirect('home')
+
+def register(request):
+    if request.method == 'POST':
+        form = SimpleUserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            messages.success(request, 'Conta criada com sucesso! Bem-vindo!')
+            return redirect('home')
+    else:
+        form = SimpleUserCreationForm()
+    return render(request, 'registration/register.html', {'form': form})
