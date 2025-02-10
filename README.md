@@ -1,7 +1,7 @@
 # SUPERMERCADO
 
 ## Descrição
-O projeto SUPERMERCADO é uma aplicação web desenvolvida em Django, destinada a gerenciar listas de compras. Os usuários podem criar, editar e visualizar suas listas de compras, além de adicionar itens com detalhes como quantidade e preço.
+O projeto **SUPERMERCADO** é uma aplicação web desenvolvida em Django, destinada a gerenciar listas de compras. Ele foi criado para solucionar um problema comum dentro de casa: a perda constante do papel com a lista de compras ou o esquecimento desse papel em casa. Com essa aplicação, os usuários podem criar, editar e visualizar suas listas de compras digitalmente, além de adicionar itens com detalhes como quantidade e preço.
 
 ## Tecnologias Utilizadas
 - **Django**: Framework web utilizado para o desenvolvimento da aplicação.
