@@ -34,3 +34,5 @@ O projeto **SUPERMERCADO** é uma aplicação web desenvolvida em Django, destin
 
 ## Contribuições
 Contribuições são bem-vindas! Sinta-se à vontade para enviar pull requests.
+
+## Projeto hospedado no pythonanywhere (https://d4nielantoni.pythonanywhere.com/)
