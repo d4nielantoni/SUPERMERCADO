@@ -11,6 +11,11 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -19,13 +24,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-0h9jo2x%nbg7s2v_bvu*+qdce1-3+=@irnunp+n!+tnegk0_u="
+# AVISO DE SEGURANÇA: mantenha a chave secreta usada em produção em segredo!
+# Obtém SECRET_KEY da variável de ambiente ou usa uma padrão para desenvolvimento
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-0h9jo2x%nbg7s2v_bvu*+qdce1-3+=@irnunp+n!+tnegk0_u=')
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# AVISO DE SEGURANÇA: não execute com debug ativado em produção!
+DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = []
+# Define hosts permitidos da variável de ambiente ou usa padrão para desenvolvimento
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
 
 # Application definition
@@ -50,6 +57,10 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    # Add security headers middleware
+    "django.middleware.security.SecurityMiddleware",
+    # Add rate limiting middleware
+    "supermercado.middleware.RateLimitMiddleware",
 ]
 
 ROOT_URLCONF = "supermercado.urls"
@@ -87,6 +98,7 @@ DATABASES = {
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
+# Validadores de senha desativados para permitir senhas simples
 AUTH_PASSWORD_VALIDATORS = []
 
 
@@ -122,3 +134,36 @@ CRISPY_TEMPLATE_PACK = "bootstrap5"
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Configurações de segurança
+# Ativar apenas em produção (quando DEBUG é False)
+if not DEBUG:
+    # Configurações HTTPS
+    SECURE_SSL_REDIRECT = os.environ.get('SECURE_SSL_REDIRECT', 'True') == 'True'
+    SESSION_COOKIE_SECURE = os.environ.get('SESSION_COOKIE_SECURE', 'True') == 'True'
+    CSRF_COOKIE_SECURE = os.environ.get('CSRF_COOKIE_SECURE', 'True') == 'True'
+    
+    # Configurações HSTS
+    SECURE_HSTS_SECONDS = int(os.environ.get('SECURE_HSTS_SECONDS', '31536000'))
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = os.environ.get('SECURE_HSTS_INCLUDE_SUBDOMAINS', 'True') == 'True'
+    SECURE_HSTS_PRELOAD = os.environ.get('SECURE_HSTS_PRELOAD', 'True') == 'True'
+    
+    # Política de segurança de conteúdo
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    
+    # Proteção contra XSS
+    SECURE_BROWSER_XSS_FILTER = True
+    
+    # Proteção contra clickjacking
+    X_FRAME_OPTIONS = 'DENY'
+    
+    # Origens confiáveis para CSRF
+    CSRF_TRUSTED_ORIGINS = os.environ.get('CSRF_TRUSTED_ORIGINS', '').split(',')
+
+# Configurações de segurança da sessão
+SESSION_COOKIE_HTTPONLY = True
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_COOKIE_AGE = 3600  # 1 hora em segundos
+
+# Tempo limite para redefinição de senha
+PASSWORD_RESET_TIMEOUT = 3600  # 1 hora em segundos
