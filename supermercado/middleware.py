@@ -1,6 +1,37 @@
 import time
-from django.http import HttpResponseForbidden
+from django.http import HttpResponseForbidden, HttpResponse
 from django.core.cache import cache
+from django.conf import settings
+
+class DisableHTTPSRedirectMiddleware:
+    """
+    Middleware para desabilitar completamente qualquer redirecionamento para HTTPS.
+    Isso é necessário apenas em ambiente de desenvolvimento, já que o servidor
+    de desenvolvimento do Django não suporta HTTPS.
+    """
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        # Processa a resposta normalmente
+        response = self.get_response(request)
+        
+        # Se estamos em modo de desenvolvimento e a resposta é um redirecionamento para HTTPS
+        if settings.DEBUG and response.status_code == 301 and response.get('Location', '').startswith('https'):
+            # Substitui o redirecionamento HTTPS por HTTP
+            url = response['Location'].replace('https://', 'http://')
+            return HttpResponse(
+                f'<html><body>Redirecionamento para HTTPS detectado e bloqueado.<br>'
+                f'Por favor, acesse <a href="{url}">{url}</a> diretamente.</body></html>'
+            )
+        
+        # Remove qualquer cabeçalho relacionado a HTTPS
+        if settings.DEBUG:
+            if 'Strict-Transport-Security' in response:
+                del response['Strict-Transport-Security']
+        
+        return response
+
 
 class RateLimitMiddleware:
     """
@@ -11,7 +42,7 @@ class RateLimitMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        if request.path == '/accounts/login/' and request.method == 'POST':
+        if (request.path == '/accounts/login/' or request.path == '/login/') and request.method == 'POST':
             ip_address = self.get_client_ip(request)
             
             cache_key = f'login_attempt_{ip_address}'

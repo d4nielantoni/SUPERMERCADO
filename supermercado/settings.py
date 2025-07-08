@@ -31,6 +31,15 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-0h9jo2x%nbg7s2v_bvu*+
 # AVISO DE SEGURANÇA: não execute com debug ativado em produção!
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
+# Desativa explicitamente todas as configurações relacionadas a HTTPS em desenvolvimento
+SECURE_SSL_REDIRECT = False
+SECURE_PROXY_SSL_HEADER = None
+SECURE_HSTS_SECONDS = 0
+SECURE_HSTS_INCLUDE_SUBDOMAINS = False
+SECURE_HSTS_PRELOAD = False
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = False
+
 # Define hosts permitidos da variável de ambiente ou usa padrão para desenvolvimento
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
@@ -49,16 +58,15 @@ INSTALLED_APPS = [
     "crispy_bootstrap5",
 ]
 
+# Configuração simplificada de middleware
 MIDDLEWARE = [
-    "django.middleware.security.SecurityMiddleware",
+    # SecurityMiddleware removido para evitar redirecionamento HTTPS em desenvolvimento
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    # Add security headers middleware
-    "django.middleware.security.SecurityMiddleware",
     # Add rate limiting middleware
     "supermercado.middleware.RateLimitMiddleware",
 ]
@@ -138,12 +146,12 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # Configurações de segurança
 # Ativar apenas em produção (quando DEBUG é False)
 if not DEBUG:
-    # Configurações HTTPS
+    # Configurações HTTPS para produção
     SECURE_SSL_REDIRECT = os.environ.get('SECURE_SSL_REDIRECT', 'True') == 'True'
     SESSION_COOKIE_SECURE = os.environ.get('SESSION_COOKIE_SECURE', 'True') == 'True'
     CSRF_COOKIE_SECURE = os.environ.get('CSRF_COOKIE_SECURE', 'True') == 'True'
     
-    # Configurações HSTS
+    # Configurações HSTS para produção
     SECURE_HSTS_SECONDS = int(os.environ.get('SECURE_HSTS_SECONDS', '31536000'))
     SECURE_HSTS_INCLUDE_SUBDOMAINS = os.environ.get('SECURE_HSTS_INCLUDE_SUBDOMAINS', 'True') == 'True'
     SECURE_HSTS_PRELOAD = os.environ.get('SECURE_HSTS_PRELOAD', 'True') == 'True'
