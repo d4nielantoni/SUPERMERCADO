@@ -55,7 +55,7 @@ def list_detail(request, pk):
     shopping_list = get_object_or_404(ShoppingList, pk=pk, user=request.user)
     items = shopping_list.items.all()
     if request.method == 'POST':
-        form = ItemForm(request.POST)
+        form = ItemForm(request.POST, request.FILES)
         if form.is_valid():
             item = form.save(commit=False)
             item.shopping_list = shopping_list

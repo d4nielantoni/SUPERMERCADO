@@ -14,66 +14,54 @@
 </div>
 
 <div class="row">
+<div class="row">
     <div class="col-lg-8 col-md-7 mb-4">
         {% if items %}
             <div class="card h-100">
                 <div class="card-body">
                     <h5 class="card-title mb-3">Itens da Lista</h5>
-                    <div class="table-responsive">
-                        <table class="table table-hover align-middle">
-                            <thead>
-                                <tr>
-                                    <th>Item</th>
-                                    <th>Qtd.</th>
-                                    <th>Preço</th>
-                                    <th class="text-center">Status</th>
-                                    <th class="text-center">Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for item in items %}
-                                    <tr {% if item.purchased %}class="table-success"{% endif %}>
-                                        <td>{{ item.name }}</td>
-                                        <td>
-                                            {% if item.quantity %}
-                                                {% if item.unit %}
-                                                    {{ item.quantity }} {{ item.unit }}
-                                                {% else %}
-                                                    {{ item.quantity }}
-                                                {% endif %}
-                                            {% elif item.unit %}
-                                                {{ item.unit }}
+                        {% for item in items %}
+                            <div class="list-group-item {% if item.purchased %}list-group-item-success{% endif %} p-3 position-relative" style="overflow: hidden;">
+                                {% if item.photo %}
+                                    <div style="position: absolute; top: 15px; right: 15px; z-index: 1;">
+                                        <img src="{{ item.photo.url }}" alt="{{ item.name }}"
+                                             class="rounded" style="width: 120px; height: 120px; object-fit: cover; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                    </div>
+                                {% endif %}
+
+                                <div style="padding-right: 140px;">
+                                    <h6 class="mb-2">{{ item.name }}</h6>
+                                    <small class="text-muted">
+                                        {% if item.quantity %}
+                                            {% if item.unit %}
+                                                <strong>Qtd:</strong> {{ item.quantity }} {{ item.unit }}
                                             {% else %}
-                                                -
+                                                <strong>Qtd:</strong> {{ item.quantity }}
                                             {% endif %}
-                                        </td>
-                                        <td>
-                                            {% if item.price %}
-                                                R$ {{ item.price }}
+                                        {% elif item.unit %}
+                                            <strong>Unidade:</strong> {{ item.unit }}
+                                        {% endif %}
+                                        {% if item.price %}
+                                            <br><strong>Preço:</strong> R$ {{ item.price }}
+                                        {% endif %}
+                                    </small>
+
+                                    <div class="d-flex gap-2 mt-3">
+                                        <a href="{% url 'toggle_item' item.pk %}" class="btn btn-sm {% if item.purchased %}btn-success{% else %}btn-outline-success{% endif %}">
+                                            {% if item.purchased %}
+                                                <i class="fas fa-check"></i>
                                             {% else %}
-                                                -
+                                                <i class="fas fa-shopping-cart"></i>
                                             {% endif %}
-                                        </td>
-                                        <td class="text-center">
-                                            <a href="{% url 'toggle_item' item.pk %}" class="btn btn-sm {% if item.purchased %}btn-success{% else %}btn-outline-success{% endif %}">
-                                                {% if item.purchased %}
-                                                    <i class="fas fa-check"></i>
-                                                {% else %}
-                                                    <i class="fas fa-shopping-cart"></i>
-                                                {% endif %}
-                                            </a>
-                                        </td>
-                                        <td class="text-center">
-                                            <a href="{% url 'delete_item' item.pk %}" class="btn btn-sm btn-danger" 
-                                               onclick="return confirm('Tem certeza que deseja deletar este item?')">
-                                                <i class="fas fa-trash"></i>
-                                            </a>
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
+                                        </a>
+                                        <a href="{% url 'delete_item' item.pk %}" class="btn btn-sm btn-danger"
+                                           onclick="return confirm('Tem certeza que deseja deletar este item?')">
+                                            <i class="fas fa-trash"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
                 </div>
             </div>
         {% else %}
@@ -87,7 +75,7 @@
         <div class="card sticky-top" style="top: 80px">
             <div class="card-body">
                 <h5 class="card-title mb-3">Adicionar Item</h5>
-                <form method="post">
+                <form method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     {{ form|crispy }}
                     <button type="submit" class="btn btn-primary w-100">
