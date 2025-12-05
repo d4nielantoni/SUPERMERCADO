@@ -4,86 +4,187 @@
 {% block content %}
 <div class="row">
     <div class="col-12 mb-4">
-        <div class="d-flex justify-content-between align-items-center flex-wrap">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
             <h1 class="mb-0">{{ shopping_list.title }}</h1>
-            <a href="{% url 'home' %}" class="btn btn-secondary">
+            <a href="{% url 'home' %}" class="btn btn-secondary btn-sm">
                 <i class="fas fa-arrow-left me-2"></i>Voltar
             </a>
         </div>
     </div>
 </div>
 
-<div class="row">
-<div class="row">
-    <div class="col-lg-8 col-md-7 mb-4">
+<div class="row g-3">
+    <div class="col-lg-8 col-md-7">
         {% if items %}
             <div class="card h-100">
                 <div class="card-body">
-                    <h5 class="card-title mb-3">Itens da Lista</h5>
+                    <h5 class="card-title mb-3">
+                        <i class="fas fa-list me-2"></i>Itens da Lista
+                    </h5>
+                    <div style="display: flex; flex-direction: column; gap: 1rem;">
                         {% for item in items %}
-                            <div class="list-group-item {% if item.purchased %}list-group-item-success{% endif %} p-3 position-relative" style="overflow: hidden;">
+                            <div class="list-group-item {% if item.purchased %}list-group-item-success{% endif %} p-3 position-relative" style="min-height: auto; border-radius: 8px; border: 1px solid #ddd; transition: all 0.2s ease; display: flex; gap: 15px; flex-direction: row-reverse; align-items: flex-start;">
                                 {% if item.photo %}
-                                    <div style="position: absolute; top: 15px; right: 15px; z-index: 1;">
+                                    <div style="flex-shrink: 0;">
                                         <img src="{{ item.photo.url }}" alt="{{ item.name }}"
-                                             class="rounded" style="width: 120px; height: 120px; object-fit: cover; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                                             class="rounded" style="width: 100px; height: 100px; object-fit: cover; box-shadow: 0 2px 8px rgba(0,0,0,0.15); border: 2px solid white;">
                                     </div>
                                 {% endif %}
 
-                                <div style="padding-right: 140px;">
-                                    <h6 class="mb-2">{{ item.name }}</h6>
-                                    <small class="text-muted">
+                                <div style="flex: 1; min-width: 0;">
+                                    <h6 class="mb-2 {% if item.purchased %}item-strikethrough{% endif %}" style="font-weight: 600; color: #333;">{{ item.name }}</h6>
+                                    <small class="text-muted {% if item.purchased %}item-strikethrough{% endif %}" style="line-height: 1.6;">
                                         {% if item.quantity %}
                                             {% if item.unit %}
-                                                <strong>Qtd:</strong> {{ item.quantity }} {{ item.unit }}
+                                                <strong>Qtd:</strong> {{ item.quantity }} {{ item.unit }}<br>
                                             {% else %}
-                                                <strong>Qtd:</strong> {{ item.quantity }}
+                                                <strong>Qtd:</strong> {{ item.quantity }}<br>
                                             {% endif %}
                                         {% elif item.unit %}
-                                            <strong>Unidade:</strong> {{ item.unit }}
+                                            <strong>Unidade:</strong> {{ item.unit }}<br>
                                         {% endif %}
                                         {% if item.price %}
-                                            <br><strong>Preço:</strong> R$ {{ item.price }}
+                                            <strong>Preço:</strong> R$ {{ item.price }}
                                         {% endif %}
                                     </small>
 
                                     <div class="d-flex gap-2 mt-3">
-                                        <a href="{% url 'toggle_item' item.pk %}" class="btn btn-sm {% if item.purchased %}btn-success{% else %}btn-outline-success{% endif %}">
+                                        <a href="{% url 'toggle_item' item.pk %}" class="btn btn-sm {% if item.purchased %}btn-success{% else %}btn-outline-success{% endif %}" title="{% if item.purchased %}Marcar como não comprado{% else %}Marcar como comprado{% endif %}">
                                             {% if item.purchased %}
-                                                <i class="fas fa-check"></i>
+                                                <i class="fas fa-check"></i> Comprado
                                             {% else %}
                                                 <i class="fas fa-shopping-cart"></i>
                                             {% endif %}
                                         </a>
                                         <a href="{% url 'delete_item' item.pk %}" class="btn btn-sm btn-danger"
-                                           onclick="return confirm('Tem certeza que deseja deletar este item?')">
+                                           onclick="return confirm('Tem certeza que deseja deletar este item?')" title="Deletar item">
                                             <i class="fas fa-trash"></i>
                                         </a>
                                     </div>
                                 </div>
                             </div>
                         {% endfor %}
+                    </div>
                 </div>
             </div>
         {% else %}
-            <div class="alert alert-info">
-                Nenhum item adicionado ainda.
+            <div class="alert alert-info text-center">
+                <i class="fas fa-inbox me-2"></i>
+                <strong>Nenhum item adicionado ainda.</strong>
+                <p class="mt-2 mb-0 text-muted">Adicione seus produtos abaixo</p>
             </div>
         {% endif %}
     </div>
 
     <div class="col-lg-4 col-md-5">
-        <div class="card sticky-top" style="top: 80px">
-            <div class="card-body">
-                <h5 class="card-title mb-3">Adicionar Item</h5>
-                <form method="post" enctype="multipart/form-data">
-                    {% csrf_token %}
-                    {{ form|crispy }}
-                    <button type="submit" class="btn btn-primary w-100">
-                        <i class="fas fa-plus me-2"></i>Adicionar
-                    </button>
-                </form>
+        <div class="d-lg-none mb-3 text-center d-flex justify-content-center">
+            <button class="btn btn-primary btn-lg rounded-circle toggle-btn-mobile" type="button" data-bs-toggle="collapse" data-bs-target="#addItemForm" aria-expanded="false" aria-controls="addItemForm" style="width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease;">
+                <i class="fas fa-chevron-down fa-lg"></i>
+            </button>
+        </div>
+
+        <div class="card sticky-top" style="top: 80px;">
+            <div class="card-header d-none d-lg-flex justify-content-between align-items-center p-3">
+                <h6 class="mb-0">
+                    <i class="fas fa-plus me-2"></i>Novo Item
+                </h6>
+                <button class="btn btn-primary btn-sm rounded-circle toggle-btn-desktop d-flex align-items-center justify-content-center" type="button" data-bs-toggle="collapse" data-bs-target="#addItemForm" aria-expanded="true" aria-controls="addItemForm" style="width: 32px; height: 32px; padding: 0; transition: all 0.3s ease;">
+                    <i class="fas fa-chevron-up"></i>
+                </button>
+            </div>
+
+            <div class="collapse show" id="addItemForm">
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ form|crispy }}
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-plus me-2"></i>Adicionar Item
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    /* Responsividade melhorada */
+    @media (max-width: 991px) {
+        .card.sticky-top {
+            position: static !important;
+            top: auto !important;
+        }
+    }
+
+    /* Animação ao hover nos itens */
+    {% comment %} .list-group-item {
+        transition: all 0.2s ease;
+    } {% endcomment %}
+
+    .list-group-item:hover {
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        {% comment %} transform: translateY(-2px); {% endcomment %}
+    }
+
+    /* Melhor aparência dos botões */
+    .btn-sm {
+        font-size: 0.875rem;
+        border-radius: 6px;
+    }
+
+    .btn-lg {
+        border-radius: 50%;
+    }
+
+    /* Efeito de riscar texto para itens comprados */
+    .item-strikethrough {
+        text-decoration: line-through;
+        color: #999 !important;
+        opacity: 0.7;
+    }
+
+    /* Rotação das setas */
+    .toggle-btn-desktop i,
+    .toggle-btn-mobile i {
+        transition: transform 0.3s ease;
+    }
+
+    /* Quando o collapse é colapsado */
+    .toggle-btn-desktop[aria-expanded="false"] i,
+    .toggle-btn-mobile[aria-expanded="false"] i {
+        transform: rotate(180deg);
+    }
+
+    /* Quando o collapse é expandido */
+    .toggle-btn-desktop[aria-expanded="true"] i,
+    .toggle-btn-mobile[aria-expanded="true"] i {
+        transform: rotate(0deg);
+    }
+</style>
+
+<!-- Script para atualizar aria-expanded -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const toggleBtnMobile = document.querySelector('.toggle-btn-mobile');
+    const toggleBtnDesktop = document.querySelector('.toggle-btn-desktop');
+    const addItemForm = document.getElementById('addItemForm');
+
+    if (toggleBtnMobile && addItemForm) {
+        addItemForm.addEventListener('show.bs.collapse', function() {
+            toggleBtnMobile.setAttribute('aria-expanded', 'true');
+            if (toggleBtnDesktop) {
+                toggleBtnDesktop.setAttribute('aria-expanded', 'true');
+            }
+        });
+
+        addItemForm.addEventListener('hide.bs.collapse', function() {
+            toggleBtnMobile.setAttribute('aria-expanded', 'false');
+            if (toggleBtnDesktop) {
+                toggleBtnDesktop.setAttribute('aria-expanded', 'false');
+            }
+        });
+    }
+});
+</script>
 {% endblock %}

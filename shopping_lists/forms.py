@@ -12,11 +12,21 @@ class ShoppingListForm(forms.ModelForm):
 class ItemForm(forms.ModelForm):
     class Meta:
         model = Item
-        fields = ['name', 'quantity', 'unit', 'price', 'photo']
+        fields = ['name', 'quantity', 'unit', 'price']
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nome do Item'}),
-            'quantity': forms.NumberInput(attrs={'class': 'form-control', 'min': '1'}),
+            'quantity': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'min': '1',
+                'type': 'number',
+                'inputmode': 'numeric'
+            }),
             'unit': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '(ex: kg, gramas)'}),
-            'price': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01', 'placeholder': 'Preço'}),
-            'photo': forms.FileInput(attrs={'class': 'form-control', 'accept': 'image/*'})
+            'price': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'step': '0.01',
+                'placeholder': 'Preço',
+                'type': 'number',
+                'inputmode': 'decimal'
+            }),
         }

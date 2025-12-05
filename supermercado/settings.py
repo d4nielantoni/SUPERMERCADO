@@ -67,8 +67,6 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    # Add rate limiting middleware
-    "supermercado.middleware.RateLimitMiddleware",
 ]
 
 ROOT_URLCONF = "supermercado.urls"
@@ -150,21 +148,21 @@ if not DEBUG:
     SECURE_SSL_REDIRECT = os.environ.get('SECURE_SSL_REDIRECT', 'True') == 'True'
     SESSION_COOKIE_SECURE = os.environ.get('SESSION_COOKIE_SECURE', 'True') == 'True'
     CSRF_COOKIE_SECURE = os.environ.get('CSRF_COOKIE_SECURE', 'True') == 'True'
-    
+
     # Configurações HSTS para produção
     SECURE_HSTS_SECONDS = int(os.environ.get('SECURE_HSTS_SECONDS', '31536000'))
     SECURE_HSTS_INCLUDE_SUBDOMAINS = os.environ.get('SECURE_HSTS_INCLUDE_SUBDOMAINS', 'True') == 'True'
     SECURE_HSTS_PRELOAD = os.environ.get('SECURE_HSTS_PRELOAD', 'True') == 'True'
-    
+
     # Política de segurança de conteúdo
     SECURE_CONTENT_TYPE_NOSNIFF = True
-    
+
     # Proteção contra XSS
     SECURE_BROWSER_XSS_FILTER = True
-    
+
     # Proteção contra clickjacking
     X_FRAME_OPTIONS = 'DENY'
-    
+
     # Origens confiáveis para CSRF
     CSRF_TRUSTED_ORIGINS = os.environ.get('CSRF_TRUSTED_ORIGINS', '').split(',')
 
