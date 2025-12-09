@@ -1,0 +1,201 @@
+{% extends 'shopping_lists/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12 mb-4">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+            <h1 class="mb-0">
+                <i class="fas fa-edit me-2"></i>Editar Item
+            </h1>
+            <a href="{% url 'list_detail' shopping_list.pk %}" class="btn btn-secondary btn-sm">
+                <i class="fas fa-arrow-left me-2"></i>Voltar
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title mb-4">
+                    <i class="fas fa-list me-2"></i>Dados do Item
+                </h5>
+
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label for="{{ form.name.id_for_label }}" class="form-label">
+                            <i class="fas fa-tag me-1"></i>{{ form.name.label }}
+                        </label>
+                        {{ form.name }}
+                        {% if form.name.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.name.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.quantity.id_for_label }}" class="form-label">
+                            <i class="fas fa-boxes me-1"></i>{{ form.quantity.label }}
+                        </label>
+                        {{ form.quantity }}
+                        {% if form.quantity.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.quantity.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.unit.id_for_label }}" class="form-label">
+                            <i class="fas fa-ruler me-1"></i>{{ form.unit.label }}
+                        </label>
+                        {{ form.unit }}
+                        {% if form.unit.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.unit.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="{{ form.price.id_for_label }}" class="form-label">
+                            <i class="fas fa-dollar-sign me-1"></i>{{ form.price.label }}
+                        </label>
+                        {{ form.price }}
+                        {% if form.price.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.price.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="{{ form.photo.id_for_label }}" class="form-label">
+                            <i class="fas fa-image me-1"></i>{{ form.photo.label }}
+                        </label>
+
+                        {% if item.photo %}
+                            <div class="mb-3">
+                                <div class="card bg-light">
+                                    <div class="card-body p-3 text-center">
+                                        <img src="{{ item.photo.url }}" alt="{{ item.name }}" class="img-fluid rounded" style="max-height: 200px; max-width: 300px;">
+                                        <p class="mt-2 mb-0 text-muted small">
+                                            <i class="fas fa-check-circle text-success me-1"></i>Foto atual
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="text-muted small mb-2">Selecione uma nova foto para substituir a atual:</p>
+                        {% endif %}
+
+                        {{ form.photo }}
+                        {% if form.photo.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ form.photo.errors }}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-save me-2"></i>Salvar Alterações
+                        </button>
+                        <a href="{% url 'list_detail' shopping_list.pk %}" class="btn btn-secondary">
+                            <i class="fas fa-times me-2"></i>Cancelar
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card com informações do item -->
+    <div class="col-md-4 col-lg-6 mt-4 mt-md-0">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title mb-3">
+                    <i class="fas fa-info-circle me-2"></i>Informações
+                </h5>
+
+                <div class="list-group list-group-flush">
+                    <div class="list-group-item px-0 py-2 border-0">
+                        <strong>Nome:</strong><br>
+                        <span class="text-muted">{{ item.name }}</span>
+                    </div>
+                    {% if item.quantity %}
+                        <div class="list-group-item px-0 py-2 border-0">
+                            <strong>Quantidade:</strong><br>
+                            <span class="text-muted">{{ item.quantity }}{% if item.unit %} {{ item.unit }}{% endif %}</span>
+                        </div>
+                    {% endif %}
+                    {% if item.price %}
+                        <div class="list-group-item px-0 py-2 border-0">
+                            <strong>Preço:</strong><br>
+                            <span class="text-muted">R$ {{ item.price }}</span>
+                        </div>
+                    {% endif %}
+                    <div class="list-group-item px-0 py-2 border-0">
+                        <strong>Status:</strong><br>
+                        {% if item.purchased %}
+                            <span class="badge bg-success">
+                                <i class="fas fa-check me-1"></i>Comprado
+                            </span>
+                        {% else %}
+                            <span class="badge bg-warning">
+                                <i class="fas fa-hourglass-half me-1"></i>Não Comprado
+                            </span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Melhorias de validação visual */
+    .form-control {
+        border-radius: 6px;
+        border: 1px solid #ddd;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .form-control:focus {
+        border-color: #6c5ce7;
+        box-shadow: 0 0 0 0.2rem rgba(108, 92, 231, 0.25);
+    }
+
+    .invalid-feedback {
+        font-size: 0.875rem;
+        color: #dc3545;
+    }
+
+    /* Card com imagem */
+    .card {
+        border-radius: 12px;
+        border: 1px solid #e9ecef;
+    }
+
+    /* Botões */
+    .btn {
+        border-radius: 6px;
+        font-weight: 500;
+    }
+
+    .btn-lg {
+        padding: 0.75rem 1.5rem;
+    }
+
+    /* Responsividade */
+    @media (max-width: 768px) {
+        .card {
+            margin-bottom: 1rem;
+        }
+    }
+</style>
+{% endblock %}

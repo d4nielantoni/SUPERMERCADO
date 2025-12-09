@@ -27,7 +27,11 @@
                                 {% if item.photo %}
                                     <div style="flex-shrink: 0;">
                                         <img src="{{ item.photo.url }}" alt="{{ item.name }}"
-                                             class="rounded" style="width: 100px; height: 100px; object-fit: cover; box-shadow: 0 2px 8px rgba(0,0,0,0.15); border: 2px solid white;">
+                                             class="rounded product-photo"
+                                             style="width: 100px; height: 100px; object-fit: cover; box-shadow: 0 2px 8px rgba(0,0,0,0.15); border: 2px solid white; cursor: pointer; transition: transform 0.2s ease;"
+                                             data-bs-toggle="modal"
+                                             data-bs-target="#photoModal"
+                                             onclick="expandPhoto('{{ item.photo.url }}', '{{ item.name }}')">
                                     </div>
                                 {% endif %}
 
@@ -55,6 +59,9 @@
                                             {% else %}
                                                 <i class="fas fa-shopping-cart"></i>
                                             {% endif %}
+                                        </a>
+                                        <a href="{% url 'edit_item' item.pk %}" class="btn btn-sm btn-primary" title="Editar item">
+                                            <i class="fas fa-edit"></i>
                                         </a>
                                         <a href="{% url 'delete_item' item.pk %}" class="btn btn-sm btn-danger"
                                            onclick="return confirm('Tem certeza que deseja deletar este item?')" title="Deletar item">
@@ -161,7 +168,53 @@
     .toggle-btn-mobile[aria-expanded="true"] i {
         transform: rotate(0deg);
     }
+
+    /* Efeito hover na foto */
+    .product-photo:hover {
+        transform: scale(1.02);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
+    }
+
+    .modal-body {
+        padding: 0;
+        background: #f8f9fa;
+    }
+
+    .modal-content {
+        border: none;
+        border-radius: 12px;
+    }
+
+    .photo-modal-img {
+        width: 100%;
+        height: auto;
+        max-height: 80vh;
+        object-fit: contain;
+        border-radius: 12px;
+    }
+
+    .photo-modal-title {
+        text-align: center;
+        padding: 1rem;
+        font-weight: 600;
+        color: #333;
+    }
 </style>
+
+<!-- Modal para expandir foto -->
+<div class="modal fade" id="photoModal" tabindex="-1" aria-labelledby="photoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title" id="photoModalLabel"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body p-3">
+                <img id="expandedPhoto" src="" alt="" class="photo-modal-img">
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- Script para atualizar aria-expanded -->
 <script>
@@ -186,5 +239,15 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+
+// Função para expandir a foto
+function expandPhoto(photoUrl, itemName) {
+    const expandedPhoto = document.getElementById('expandedPhoto');
+    const photoModalLabel = document.getElementById('photoModalLabel');
+
+    expandedPhoto.src = photoUrl;
+    expandedPhoto.alt = itemName;
+    photoModalLabel.textContent = itemName;
+}
 </script>
 {% endblock %}

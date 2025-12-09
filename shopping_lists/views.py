@@ -19,7 +19,7 @@ class SimpleUserCreationForm(UserCreationForm):
         strip=False,
         widget=forms.PasswordInput(attrs={'class': 'form-control'}),
     )
-    
+
     class Meta:
         model = User
         fields = ("username",)
@@ -76,6 +76,26 @@ def toggle_item(request, pk):
     item.purchased = not item.purchased
     item.save()
     return redirect('list_detail', pk=item.shopping_list.pk)
+
+@login_required
+def edit_item(request, pk):
+    item = get_object_or_404(Item, pk=pk, shopping_list__user=request.user)
+    shopping_list = item.shopping_list
+
+    if request.method == 'POST':
+        form = ItemForm(request.POST, request.FILES, instance=item)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Item atualizado com sucesso!')
+            return redirect('list_detail', pk=shopping_list.pk)
+    else:
+        form = ItemForm(instance=item)
+
+    return render(request, 'shopping_lists/edit_item.html', {
+        'form': form,
+        'item': item,
+        'shopping_list': shopping_list
+    })
 
 @login_required
 def delete_item(request, pk):
