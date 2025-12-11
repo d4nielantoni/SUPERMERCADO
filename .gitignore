@@ -15,6 +15,7 @@ ENV/
 db.sqlite3
 db.sqlite3-journal
 media/
+staticfiles/
 
 # VS Code
 .vscode/
@@ -28,4 +29,5 @@ media/
 
 # System Files
 .DS_Store
+Thumbs.db
 Thumbs.db
