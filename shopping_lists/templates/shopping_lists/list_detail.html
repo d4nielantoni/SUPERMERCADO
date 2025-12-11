@@ -1,14 +1,21 @@
 {% extends 'shopping_lists/base.html' %}
 {% load crispy_forms_tags %}
+{% load static %}
 
 {% block content %}
+<link href="{% static 'css/list-detail.css' %}" rel="stylesheet">
 <div class="row">
     <div class="col-12 mb-4">
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
             <h1 class="mb-0">{{ shopping_list.title }}</h1>
-            <a href="{% url 'home' %}" class="btn btn-secondary btn-sm">
-                <i class="fas fa-arrow-left me-2"></i>Voltar
-            </a>
+            <div class="d-flex gap-2 flex-wrap">
+                <a href="{% url 'export_pdf' shopping_list.pk %}" class="btn btn-danger btn-sm" title="Exportar como PDF">
+                    <i class="fas fa-file-pdf me-2"></i>Exportar PDF
+                </a>
+                <a href="{% url 'home' %}" class="btn btn-secondary btn-sm">
+                    <i class="fas fa-arrow-left me-2"></i>Voltar
+                </a>
+            </div>
         </div>
     </div>
 </div>
@@ -115,92 +122,6 @@
     </div>
 </div>
 
-<style>
-    /* Responsividade melhorada */
-    @media (max-width: 991px) {
-        .card.sticky-top {
-            position: static !important;
-            top: auto !important;
-        }
-    }
-
-    /* Animação ao hover nos itens */
-    {% comment %} .list-group-item {
-        transition: all 0.2s ease;
-    } {% endcomment %}
-
-    .list-group-item:hover {
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        {% comment %} transform: translateY(-2px); {% endcomment %}
-    }
-
-    /* Melhor aparência dos botões */
-    .btn-sm {
-        font-size: 0.875rem;
-        border-radius: 6px;
-    }
-
-    .btn-lg {
-        border-radius: 50%;
-    }
-
-    /* Efeito de riscar texto para itens comprados */
-    .item-strikethrough {
-        text-decoration: line-through;
-        color: #999 !important;
-        opacity: 0.7;
-    }
-
-    /* Rotação das setas */
-    .toggle-btn-desktop i,
-    .toggle-btn-mobile i {
-        transition: transform 0.3s ease;
-    }
-
-    /* Quando o collapse é colapsado */
-    .toggle-btn-desktop[aria-expanded="false"] i,
-    .toggle-btn-mobile[aria-expanded="false"] i {
-        transform: rotate(180deg);
-    }
-
-    /* Quando o collapse é expandido */
-    .toggle-btn-desktop[aria-expanded="true"] i,
-    .toggle-btn-mobile[aria-expanded="true"] i {
-        transform: rotate(0deg);
-    }
-
-    /* Efeito hover na foto */
-    .product-photo:hover {
-        transform: scale(1.02);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
-    }
-
-    .modal-body {
-        padding: 0;
-        background: #f8f9fa;
-    }
-
-    .modal-content {
-        border: none;
-        border-radius: 12px;
-    }
-
-    .photo-modal-img {
-        width: 100%;
-        height: auto;
-        max-height: 80vh;
-        object-fit: contain;
-        border-radius: 12px;
-    }
-
-    .photo-modal-title {
-        text-align: center;
-        padding: 1rem;
-        font-weight: 600;
-        color: #333;
-    }
-</style>
-
 <!-- Modal para expandir foto -->
 <div class="modal fade" id="photoModal" tabindex="-1" aria-labelledby="photoModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
@@ -216,38 +137,6 @@
     </div>
 </div>
 
-<!-- Script para atualizar aria-expanded -->
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const toggleBtnMobile = document.querySelector('.toggle-btn-mobile');
-    const toggleBtnDesktop = document.querySelector('.toggle-btn-desktop');
-    const addItemForm = document.getElementById('addItemForm');
-
-    if (toggleBtnMobile && addItemForm) {
-        addItemForm.addEventListener('show.bs.collapse', function() {
-            toggleBtnMobile.setAttribute('aria-expanded', 'true');
-            if (toggleBtnDesktop) {
-                toggleBtnDesktop.setAttribute('aria-expanded', 'true');
-            }
-        });
-
-        addItemForm.addEventListener('hide.bs.collapse', function() {
-            toggleBtnMobile.setAttribute('aria-expanded', 'false');
-            if (toggleBtnDesktop) {
-                toggleBtnDesktop.setAttribute('aria-expanded', 'false');
-            }
-        });
-    }
-});
-
-// Função para expandir a foto
-function expandPhoto(photoUrl, itemName) {
-    const expandedPhoto = document.getElementById('expandedPhoto');
-    const photoModalLabel = document.getElementById('photoModalLabel');
-
-    expandedPhoto.src = photoUrl;
-    expandedPhoto.alt = itemName;
-    photoModalLabel.textContent = itemName;
-}
-</script>
+{% load static %}
+<script src="{% static 'js/list-detail.js' %}"></script>
 {% endblock %}

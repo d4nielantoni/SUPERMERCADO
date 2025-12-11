@@ -1,7 +1,9 @@
 {% extends 'shopping_lists/base.html' %}
 {% load crispy_forms_tags %}
+{% load static %}
 
 {% block content %}
+<link href="{% static 'css/edit-item.css' %}" rel="stylesheet">
 <div class="row">
     <div class="col-12 mb-4">
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
@@ -157,45 +159,6 @@
     </div>
 </div>
 
-<style>
-    /* Melhorias de validação visual */
-    .form-control {
-        border-radius: 6px;
-        border: 1px solid #ddd;
-        transition: border-color 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .form-control:focus {
-        border-color: #6c5ce7;
-        box-shadow: 0 0 0 0.2rem rgba(108, 92, 231, 0.25);
-    }
-
-    .invalid-feedback {
-        font-size: 0.875rem;
-        color: #dc3545;
-    }
-
-    /* Card com imagem */
-    .card {
-        border-radius: 12px;
-        border: 1px solid #e9ecef;
-    }
-
-    /* Botões */
-    .btn {
-        border-radius: 6px;
-        font-weight: 500;
-    }
-
-    .btn-lg {
-        padding: 0.75rem 1.5rem;
-    }
-
-    /* Responsividade */
-    @media (max-width: 768px) {
-        .card {
-            margin-bottom: 1rem;
-        }
-    }
-</style>
+{% load static %}
+<script src="{% static 'js/form-validation.js' %}"></script>
 {% endblock %}
